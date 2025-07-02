@@ -41,9 +41,16 @@ For running the client to connect to a server
 ```
 ---
 ## Usage
-
 - Launch the application in your terminal.
 - Follow the on-screen instructions to join or create a chat.
+[Example Image](term-chat-menu.png)
+  
+- Chat
+[Example Image](chat-server.png)
+
+- Voice Chat
+[Example Image](audio-serv.png)
+
 ---
 ## Contributing
 
