@@ -21,8 +21,8 @@ Term-Chat-TUI is a terminal-based chat application written in C. It provides a s
 Clone the repository and build the project:
 
 ```sh
-git clone https://github.com/GrandBIRDLizard/Chit-Chat-TUI.git
-cd Chit-Chat-TUI
+git clone https://github.com/GrandBIRDLizard/Term-Chat-TUI.git
+cd Term-Chat-TUI
 make
 ```
 ---
