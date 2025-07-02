@@ -1,6 +1,6 @@
-# Chit-Chat-TUI
+# Term-Chat-TUI
 
-Chit-Chat-TUI is a terminal-based chat application written in C. It provides a simple text user interface (TUI) for real-time communication directly from your terminal.
+Term-Chat-TUI is a terminal-based chat application written in C. It provides a simple text user interface (TUI) for real-time communication directly from your terminal.
 ---
 ## Features
 
