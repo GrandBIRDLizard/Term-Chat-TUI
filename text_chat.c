@@ -257,7 +257,7 @@ void start_text_chat(const char *server_ip, int port) {
 
     pthread_create(&thread_id, NULL, receive_messages, &sock);
 
-	while (1) {
+    while (1) {
     pthread_mutex_lock(&win_mutex);
     wmove(input_win, 1, 2);
     wrefresh(input_win);
