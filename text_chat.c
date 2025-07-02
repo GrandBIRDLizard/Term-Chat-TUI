@@ -7,19 +7,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ncurses.h>
-#include <signal.h>
+
 
 #define BUFFER_SIZE 1024
 #define CHAT_HISTORY_LINES 200
 #define MAX_DISPLAY_LINES 512  
 #define MIN_ROWS 25
 #define MIN_COLS 45
-
-volatile sig_atomic_t resized = 0;
-
-void handle_winch(int sig) {
-	resized = 1;
-}
 
 ChatLine chat_history[CHAT_HISTORY_LINES];
 int chat_count = 0;
