@@ -1,4 +1,5 @@
 #include "text_chat.h"
+#include <openssl/crypto.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +8,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ncurses.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 
 #define BUFFER_SIZE 1024
@@ -140,12 +143,12 @@ void redraw_chat_history() {
     wrefresh(recv_win);
 }
 
-void *receive_messages(void *socket_desc) {
-    int sock = *(int *)socket_desc;
+void *receive_messages(void *ssl_ptr) {
+    SSL *ssl = (SSL *)ssl_ptr;
     char buffer[BUFFER_SIZE];
 
     while (1) {
-        int valread = read(sock, buffer, BUFFER_SIZE - 1);
+        int valread = SSL_read(ssl, buffer, BUFFER_SIZE - 1);
         if (valread <= 0) break;
         buffer[valread] = '\0';
         pthread_mutex_lock(&win_mutex);
@@ -213,6 +216,18 @@ void start_text_chat(const char *server_ip, int port) {
     char buffer[BUFFER_SIZE];
     int input_len, cursor_pos;
 
+	//ssl Init
+	SSL_library_init();
+	OpenSSL_add_all_algorithms();
+	SSL_load_error_strings();
+
+	const SSL_METHOD *method = TLS_client_method();
+	SSL_CTX *ctx = SSL_CTX_new(method);
+	if (!ctx) {
+		ERR_print_errors_fp(stderr);
+		exit(EXIT_FAILURE);
+	}
+
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("Socket creation failed!");
@@ -227,6 +242,13 @@ void start_text_chat(const char *server_ip, int port) {
         perror("Connection failed");
         exit(EXIT_FAILURE);
     }
+
+	SSL *ssl = SSL_new(ctx);
+	SSL_set_fd(ssl, sock);
+	if (SSL_connect(ssl) <= 0) {
+		ERR_print_errors_fp(stderr);
+		exit(EXIT_FAILURE);
+	}
 
     initscr();
     cbreak();
@@ -255,7 +277,7 @@ void start_text_chat(const char *server_ip, int port) {
     box(input_win, 0, 0);
     wrefresh(input_win);
 
-    pthread_create(&thread_id, NULL, receive_messages, &sock);
+    pthread_create(&thread_id, NULL, receive_messages, ssl);
 
     while (1) {
     pthread_mutex_lock(&win_mutex);
@@ -365,18 +387,21 @@ void start_text_chat(const char *server_ip, int port) {
 
     if (strncmp(buffer, "/quit", 5) == 0) break;
 
-    send(sock, buffer, strlen(buffer), 0);
+    SSL_write(ssl, buffer, strlen(buffer));
     print_sender_message(buffer);
     clear_input_line();
 	}
 
 pthread_cancel(thread_id);
 pthread_join(thread_id, NULL);
+
+SSL_shutdown(ssl);
+SSL_free(ssl);
+SSL_CTX_free(ctx);
+
 close(sock);
 delwin(recv_win);
 delwin(input_win);
 endwin();
 }
-
-
 
