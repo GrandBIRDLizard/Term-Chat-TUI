@@ -1,11 +1,12 @@
 # Term-Chat-TUI
 
-Term-Chat-TUI is a terminal-based chat application written in C. It provides a simple text user interface (TUI) for real-time communication directly from your terminal.
+Term-Chat-TUI is an encrypted terminal-based chat application written in C. It provides a simple text user interface (TUI) for real-time communication directly from your terminal.
 ---
 ## Features
 
 - Lightweight and fast terminal chat interface  
-- Written in C for performance  
+- Written in C for performance
+- Data streams encrypted with SSL  
 - Easy to build with Makefile  
 - Cross-platform support (Linux, macOS)
 ---
@@ -24,6 +25,7 @@ Clone the repository and build the project:
 git clone https://github.com/GrandBIRDLizard/Term-Chat-TUI.git
 cd Term-Chat-TUI
 make
+make certs // follow instructions to set up SSL certification and keys on server
 ```
 ---
 ### Running
